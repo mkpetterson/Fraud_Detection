@@ -2,7 +2,8 @@
 import time
 import requests
 import pymongo
-
+#from src import pred
+#from src.clean import clean_data_func
 
 class EventAPIClient:
     """Realtime Events API Client"""
@@ -21,6 +22,9 @@ class EventAPIClient:
 
     def save_to_database(self, row):
         """Save a data row to the database."""
+        #cleaned_data = clean_data_func(data['data'])
+        #cleaned_data['prediction'] = pred(cleaned_data)
+        #save cleaned datat to DB
         print("Received data:\n" + repr(row) + "\n")  # replace this with your code
 
     def get_data(self):
