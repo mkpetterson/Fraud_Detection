@@ -1,9 +1,16 @@
 #Imports
 from flask import Flask, request
 app = Flask(__name__)
+from collections import Counter
+import matplotlib.pyplot as plt
+import numpy as np
 #from src import pred
 #from src import clean_data_func
 from src import api_client
+import pymongo
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.fraud_detection
 
 #Setup
 client = api_client.EventAPIClient()
@@ -40,7 +47,19 @@ def reverse_string():
     
 @app.route('/dashboard', methods=['GET'])
 def display_dash():
-       
+    data = db.fraud_detection.find()
+    count = Counter()
+    for i in data:
+        count[i['data']['country']] += 1
+    fig, ax = plt.subplots()
+    x = np.arange(len(count.keys()))
+    y = count.values()
+    ax.bar(x, y)
+    fig.savefig('static/current.png')
+    return '''
+     <h1>Project Title</h1>
+     
+    <img src='static/current.png'>'''
 
 
 
