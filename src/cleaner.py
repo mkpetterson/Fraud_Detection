@@ -19,9 +19,14 @@ keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'e
 def clean_with_target(data:any) -> pd.DataFrame:
     """ Returns clean dataframe with wanted columns """
     
+    # Create fraud column
     data_cp = data[keep + ['acct_type']].copy()
     data_cp['fraud'] = data_cp['acct_type'].apply(re_match_fraud).astype(int)
     data_cp.drop(columns='acct_type', inplace=True)
+    
+    # Create other useful features
+    data_cp['n_previous_payouts'] = data_cp['previous_payouts'].apply(lambda x: len(x))
+    data_cp.drop(columns='previous_payouts', inplace=True)
     
     return data_cp
 
@@ -30,9 +35,10 @@ def clean_row(call:any) -> pd.Series:
     """ Returns clean series with wanted columns, intake taken from Client API call """
     to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'fraud', 'n_previous_payouts']
     
-    # Put into dataframe
+    # Put into dataframe and apply cleaning functions
     df = pd.DataFrame(call)
-    
+    df_keep = df[keep]
+          
     
     cleaned_df = df[to_keep]
     
