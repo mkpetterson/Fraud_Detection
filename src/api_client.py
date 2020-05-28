@@ -2,6 +2,10 @@
 import time
 import requests
 import pymongo
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+#client = MongoClient(f"address to db/fraud_detection")
+db = client.fraud_detection
 #from src import pred
 #from src.clean import clean_data_func
 
@@ -25,6 +29,7 @@ class EventAPIClient:
         #cleaned_data = clean_data_func(data['data'])
         #cleaned_data['prediction'] = pred(cleaned_data)
         #save cleaned datat to DB
+        db.fraud_detection.insert({'_id': row['sequence_number'], 'data': row})
         print("Received data:\n" + repr(row) + "\n")  # replace this with your code
 
     def get_data(self):
