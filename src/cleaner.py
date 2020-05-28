@@ -21,3 +21,12 @@ def clean_data(data:any) -> pd.DataFrame:
 
 def clean_row(call:any) -> pd.Series:
     pass
+
+
+def create_target(df):
+    """ Take in dataframe and generate binary target"""
+
+    df['fraud'] = df['acct_type'].apply(lambda x: 0 if x == 'premium' else 1)
+    df.drop(columns='acct_type', inplace=True)
+    
+    return df
