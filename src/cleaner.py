@@ -42,9 +42,9 @@ def ohe_existence(data:pd.DataFrame, trg_columns:List[str], rename:bool=True) ->
     """ Given a list of target columns with STR values, function will one-hot-encode column based on the EXISTENCE of the feature """
     data_cop = data.copy()
     
-    for col in trg_col:
+    for col in trg_columns:
         if rename:
-            data_cop[f"has_{col}"] = (data_cop[col] == '').astype(int)
+            data_cop[f"has_{col}"] = (data_cop[col] != '').astype(int)
             data_cop.drop(columns=col, inplace=True)
         else:
             data_cop[col] = (data_cop[col] == '').astype(int)
