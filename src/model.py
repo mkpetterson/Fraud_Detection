@@ -2,10 +2,9 @@
 import pandas as pd
 import numpy as np
 
+from src import cleaner
+
 from sklearn.ensemble import  RandomForestClassifier
-
-
-
 
 
 def nuclear_option(df, new_data):
@@ -24,7 +23,7 @@ def nuclear_option(df, new_data):
     model.fit(X,y)
     
     # Predict on new data. Proba function returns prob of class [0,1]
-    new_data = np.array(clean_row(new_data))
+    new_data = np.array(cleaner.clean_row(new_data))
     y_hat = model.predict(new_data)
     y_hat_proba = model.predict_proba(new_data.reshape(1,-1))
     
