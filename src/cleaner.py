@@ -8,6 +8,10 @@ import re
 import pandas as pd
 import numpy as np
 
+def re_match_fraud(trg:str) -> bool:
+    """ Returns bool if 'fraud' pattern string in target """
+    pattern  = re.compile(r'fraud', re.I)
+    return bool(pattern.search(trg))
 
 keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'event_start', 'fb_published', 'has_logo', 'listed', 'payee_name', 'payout_type', 'previous_payouts', 'user_type', 'venue_country', 'venue_latitude', 'venue_longitude']
 
@@ -16,7 +20,7 @@ def clean_with_target(data:any) -> pd.DataFrame:
     """ Returns clean dataframe with wanted columns """
     
     data_cp = data[keep + ['acct_type']].copy()
-    data_cp['fraud'] = data_cp['acct_type'].apply(lambda x: 0 if x == 'premium' else 1)
+    data_cp['fraud'] = data_cp['acct_type'].apply(re_match_fraud).astype(int)
     data_cp.drop(columns='acct_type', inplace=True)
     
     return data_cp
