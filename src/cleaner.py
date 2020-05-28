@@ -4,7 +4,7 @@ import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
 import re
-
+from typing import List
 import pandas as pd
 import numpy as np
 
@@ -38,7 +38,14 @@ def clean_row(call:any) -> pd.Series:
     
     return cleaned_df
     
-
+def ohe_existence(data:pd.DataFrame, trg_columns:List[str]) -> pd.DataFrame:
+    """ Given a list of target columns with STR values, function will one-hot-encode column based on the EXISTENCE of the feature """
+    data_cop = data.copy()
+    
+    for col in trg_col:
+        data_cop[col] = (data_cop[col] == '').astype(int)
+    
+    return data_cop
 
 def nuclear_option(df, new_data):
     """Takes in the cleaned dataframe and outputs a super simple df for initial model"""
