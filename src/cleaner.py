@@ -12,7 +12,7 @@ import numpy as np
 keep = ['country', 'currency', 'delivery_method', 'email_domain', 'event_start', 
         'fb_published', 'listed', 'object_id', 'payee_name', 'payout_type', 
         'previous_payouts', 'user_age', 'user_type', 'venue_country', 'venue_latitude', 
-        'venue_longitude', 'venue_name', 'venue_state']
+        'venue_longitude']
 
 
 def clean_with_target(data:any) -> pd.DataFrame:
