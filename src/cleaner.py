@@ -69,7 +69,11 @@ def clean_row(call:any, drop_cord:bool=True) -> pd.Series:
     to_drop = ['previous_payouts', 'venue_latitude', 'venue_longitude'] if drop_cord else ['previous_payouts']
     
     # Put into dataframe
-    data_cp = pd.DataFrame(call)
+    # print(type(call))
+    try:
+        data_cp = pd.DataFrame(call)
+    except:
+        data_cp = pd.DataFrame(call[0])
     data_cp = data_cp[keep]
     
         
