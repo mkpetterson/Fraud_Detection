@@ -1,12 +1,16 @@
 #Imports
 from flask import Flask, request
 app = Flask(__name__)
+
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+
 #from src import pred
 #from src import clean_data_func
+
 from src import api_client
+
 import pymongo
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
@@ -19,16 +23,18 @@ client = api_client.EventAPIClient()
 @app.route('/', methods=['GET'])
 def home():
     return ''' 
-    <h1>Project Title</h1>
-    <p><a href="/dashboard">dashboard</a></p>
-    <p> nothing here, friend, but a link to 
-                   <a href="/hello">hello</a> and an 
-                   <a href="/form_example">example form</a> </p> 
+    <h1>Fraud Detection</h1>
+    <p>check out our dashboard:
+        <a href="/dashboard">dashboard</a>
+    </p>
+    <p> tell us more about yourself
+        <a href="/form_example">example form</a> 
+    </p> 
                    '''
 
-@app.route('/hello', methods=['GET'])
-def hello_world():
-    return ''' <h1> Hello, World!</h1> '''
+# @app.route('/hello', methods=['GET'])
+# def hello_world():
+#     return ''' <h1> Hello, World!</h1> '''
 
 @app.route('/form_example', methods=['GET'])
 def form_display():
@@ -44,10 +50,12 @@ def reverse_string():
     reversed_string = text[-1::-1]
     return ''' output: {}  '''.format(reversed_string)
 
-    
+
+
 @app.route('/dashboard', methods=['GET'])
 def display_dash():
     data = db.fraud_detection.find()
+    
     count = Counter()
     for i in data:
         count[i['data']['country']] += 1
@@ -57,9 +65,11 @@ def display_dash():
     ax.bar(x, y)
     fig.savefig('static/current.png')
     return '''
-     <h1>Project Title</h1>
+     <h1>Fraud Dashboard</h1>
      
-    <img src='static/current.png'>'''
+    <img src='static/current.png'>
+    
+    '''
 
 
 
