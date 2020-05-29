@@ -54,7 +54,7 @@ class EventAPIClient:
         
         #save cleaned data to DB
         
-        db.fraud_alert.insert_one({'time': time, 'data': data_dict}, bypass_document_validation=True)
+        db.fraud_alert.insert_one({'time': time, 'data': data_dict})
         print("Received data:\n" + repr(row) + "\n")  
         
     def get_data(self):
