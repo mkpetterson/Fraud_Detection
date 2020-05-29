@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 from src import cleaner
 
@@ -10,11 +11,6 @@ from sklearn.ensemble import  RandomForestClassifier
 
 def make_model(df):
     """Fit and pickle model"""
-    
-    # Eviscerate dataset
-    to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'fraud', 'n_previous_payouts']
-    model_df = df[to_keep]
-    model_df = model_df.dropna()
     
     # Make model
     y = model_df.pop('fraud')
@@ -32,7 +28,7 @@ def make_model(df):
 
 def nuclear_option(new_data):
     """Takes in the model and new data and predicts fraud"""
-    
+
     with open('../models/random_forest_model.pkl', 'rb') as f:
         model = pickle.load(f)
 
