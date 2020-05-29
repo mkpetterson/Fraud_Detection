@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 from src import cleaner
 
@@ -10,11 +11,6 @@ from sklearn.ensemble import  RandomForestClassifier
 
 def make_model(df):
     """Fit and pickle model"""
-    
-    # Eviscerate dataset
-    to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'fraud', 'n_previous_payouts']
-    model_df = df[to_keep]
-    model_df = model_df.dropna()
     
     # Make model
     y = model_df.pop('fraud')
@@ -30,16 +26,47 @@ def make_model(df):
     return None
     
 
-def nuclear_option(new_data):
+def predict_new_data(new_data, model_name):
     """Takes in the model and new data and predicts fraud"""
-    
-    with open('../models/random_forest_model.pkl', 'rb') as f:
+
+    # Open up model
+    model_name = model_name+'.pkl'
+    path = os.path.join('../models/', model_name)
+    print(f'Loading model from: {path}...')
+    with open('../models/random_forest_modelv2.pkl', 'rb') as f:
         model = pickle.load(f)
 
     # Predict on new data. Proba function returns prob of class [0,1]
-    new_data = np.array(cleaner.clean_row(new_data))
-    y_hat = model.predict(new_data)
-    y_hat_proba = model.predict_proba(new_data.reshape(1,-1))
+    try:
+        new_data = cleaner.clean_row(new_data)
+        np_data = np.array(new_data)
+    except:
+        new_data = cleaner.clean_row([new_data])
+        np_data = np.array(new_data)
+        
+    # Make predictions    
+    y_hat = model.predict(np_data)
+    y_hat_proba = model.predict_proba(np_data.reshape(1,-1))
     
-    return y_hat[0], y_hat_proba[0][1]
+    # Get fraud levels
+    proba_fraud, risk_level = compute_risk(y_hat_proba)
+    
+    # Create new df
+    new_data['proba_fraud'] = proba_fraud 
+    new_data['risk'] = risk_level
+    
+    return new_data, proba_fraud, risk_level
 
+
+def compute_risk(y_hat_proba):
+    
+    proba_fraud = y_hat_proba[0][1]
+    
+    if proba_fraud < 0.1:
+        risk = 'Low Risk'
+    elif proba_fraud > 0.5:
+        risk = 'High Risk'    
+    else:
+        risk = 'Medium Risk'
+    
+    return proba_fraud, risk

@@ -50,7 +50,8 @@ class EventAPIClient:
             if data:
                 print("Saving...")
                 for row in data:
-                    self.save_to_database(row)
+                    yield row
+#                     self.save_to_database(row)
             else:
                 print("No new data received.")
             print(f"Waiting {interval} seconds...")
