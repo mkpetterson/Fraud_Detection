@@ -26,7 +26,7 @@ def make_model(df):
     return None
     
 
-def nuclear_option(new_data):
+def predict_new_data(new_data):
     """Takes in the model and new data and predicts fraud"""
 
     with open('../models/random_forest_model.pkl', 'rb') as f:
