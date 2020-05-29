@@ -29,7 +29,7 @@ def make_model(df):
 def predict_new_data(new_data):
     """Takes in the model and new data and predicts fraud"""
 
-    with open('../models/random_forest_model.pkl', 'rb') as f:
+    with open('../models/random_forest_modelv2.pkl', 'rb') as f:
         model = pickle.load(f)
 
     # Predict on new data. Proba function returns prob of class [0,1]
@@ -37,5 +37,11 @@ def predict_new_data(new_data):
     y_hat = model.predict(new_data)
     y_hat_proba = model.predict_proba(new_data.reshape(1,-1))
     
+    
+    #risk_level = compute_risk(y_hat_proba)
+    
+    
     return y_hat[0], y_hat_proba[0][1]
+
+
 
