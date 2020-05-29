@@ -9,6 +9,8 @@ import numpy as np
 from src import api_client
 import pymongo
 from pymongo import MongoClient
+import mplcyberpunk 
+plt.style.use("cyberpunk")
 client = MongoClient('localhost', 27017)
 db = client.fraud_detection
 
@@ -54,7 +56,11 @@ def display_dash():
     fig, ax = plt.subplots()
     x = np.arange(len(count.keys()))
     y = count.values()
-    ax.bar(x, y)
+    alpha_col = 0.7
+    colors = ["g", "deeppink", "dodgerblue", "orange", "white", "purple", "red"]
+    ax.bar(x, y, color=colors, alpha=alpha_col)
+    mplcyberpunk.add_glow_effects()
+    mplcyberpunk.add_underglow()
     fig.savefig('static/current.png')
     return render_template('dashboard.html')
 
