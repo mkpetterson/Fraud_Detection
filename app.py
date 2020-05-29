@@ -1,5 +1,5 @@
 #Imports
-from flask import Flask, request
+from flask import Flask, request, render_template, jsonify
 app = Flask(__name__)
 from collections import Counter
 import matplotlib.pyplot as plt
@@ -56,12 +56,14 @@ def display_dash():
     y = count.values()
     ax.bar(x, y)
     fig.savefig('static/current.png')
-    return '''
-     <h1>Project Title</h1>
-     
-    <img src='static/current.png'>'''
+    return render_template('dashboard.html')
 
 
+@app.route('/draw', methods=['GET'])
+def draw():
+    one = db.fraud_detection.find()[0]
+    print(one)
+    return jsonify({'one': one})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
