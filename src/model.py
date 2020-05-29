@@ -26,9 +26,13 @@ def make_model(df):
     return None
     
 
-def predict_new_data(new_data):
+def predict_new_data(new_data, model_name):
     """Takes in the model and new data and predicts fraud"""
 
+    # Open up model
+    model_name = model_name+'.pkl'
+    path = os.path.join('../models/', model_name)
+    print(f'Loading model from: {path}...')
     with open('../models/random_forest_modelv2.pkl', 'rb') as f:
         model = pickle.load(f)
 
