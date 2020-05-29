@@ -33,7 +33,7 @@ def clean_with_target(data:any) -> pd.DataFrame:
 
 def clean_row(call:any) -> pd.Series:
     """ Returns clean series with wanted columns, intake taken from Client API call """
-    to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'fraud', 'n_previous_payouts']
+    to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'n_previous_payouts']
     
     # Put into dataframe
     data_cp = pd.DataFrame(call)
