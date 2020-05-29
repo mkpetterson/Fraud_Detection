@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 #from src import pred
 #from src import clean_data_func
-from src import api_client
+import api_client
 import pymongo
 from pymongo import MongoClient
 import mplcyberpunk 
@@ -21,11 +21,9 @@ client = api_client.EventAPIClient()
 @app.route('/', methods=['GET'])
 def home():
     return ''' 
-    <h1>Project Title</h1>
+    <h1>Fraud Detection Homepage</h1>
     <p><a href="/dashboard">dashboard</a></p>
-    <p> nothing here, friend, but a link to 
-                   <a href="/hello">hello</a> and an 
-                   <a href="/form_example">example form</a> </p> 
+                   <a href="/form_example">survey form</a> </p> 
                    '''
 
 @app.route('/hello', methods=['GET'])
@@ -67,7 +65,9 @@ def display_dash():
 
 @app.route('/draw', methods=['GET'])
 def draw():
-    one = db.fraud_detection.find()[0]
+    count = db.fraud_alert.find().count()
+    #one = db.fraud_alert.find().sort({'_id':-1}).limit(1)
+    one = db.fraud_alert.find(count)
     print(one)
     return jsonify({'one': one})
 

@@ -5,7 +5,7 @@ import pickle
 import os
 from bson.binary import Binary
 
-import cleaner
+import src.cleaner
 
 from sklearn.ensemble import  RandomForestClassifier
 
@@ -42,17 +42,11 @@ def predict_new_data(new_data):
     
     
     pred = y_hat[0].tolist()
-    #print(f'pred shape: {}', pred.shape)
+
     proba = y_hat_proba[0][1].tolist()
-    #print(f'proba shape: {}', proba.shape)
     
     new_data = Binary( pickle.dumps( new_data, protocol=2) )
     
-    #new_data = new_data.to_json(orient='records')
-    
-    #print(f'new_data shape: {}', new_data.shape)
     data_dict = { "data" : new_data, "prediction": pred, "probability" : proba }
     return data_dict
 
-# todo : generalize random forest to different models
-# classifer function
