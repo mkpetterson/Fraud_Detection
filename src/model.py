@@ -54,4 +54,3 @@ def predict_new_data(new_data):
 
 # todo : generalize random forest to different models
 # classifer function
-
