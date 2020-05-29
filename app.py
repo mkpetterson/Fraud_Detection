@@ -23,10 +23,13 @@ def home():
     return ''' 
     <h1>Project Title</h1>
     <p><a href="/dashboard">dashboard</a></p>
-    <p> nothing here, friend, but a link to 
-                   <a href="/hello">hello</a> and an 
-                   <a href="/form_example">example form</a> </p> 
+    <p><a href='/profile'>profile</a></p> 
+    <p>project explanation here</p>
                    '''
+
+@app.route('/profile', methods=['GET'])
+def profile():
+    return render_template('fraud_data_profile.html')
 
 @app.route('/hello', methods=['GET'])
 def hello_world():
