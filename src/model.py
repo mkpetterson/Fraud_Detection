@@ -27,4 +27,4 @@ def nuclear_option(df, new_data):
     y_hat = model.predict(new_data)
     y_hat_proba = model.predict_proba(new_data.reshape(1,-1))
     
-    return y_hat, y_hat_proba[1]
+    return y_hat[0], y_hat_proba[0][1]
