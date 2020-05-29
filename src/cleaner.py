@@ -63,10 +63,11 @@ def create_features(data:pd.DataFrame) -> pd.DataFrame:
 
 
 
-def clean_row(call:any) -> pd.Series:
+def clean_row(call:any, drop_cord:bool=True) -> pd.Series:
     """ Returns clean series with wanted columns, intake taken from Client API call """
     keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'event_created', 'event_published', 'event_end', 'event_start', 'fb_published', 'has_logo', 'listed', 'payee_name', 'payout_type', 'previous_payouts', 'user_created', 'user_type', 'venue_country', 'venue_latitude', 'venue_longitude']
     
+    to_drop = ['previous_payouts', 'venue_latitude', 'venue_longitude'] if drop_cord else ['previous_payouts']
     
     # Put into dataframe
     data_cp = pd.DataFrame(call)
@@ -74,7 +75,8 @@ def clean_row(call:any) -> pd.Series:
     
         
     data_cp['n_previous_payouts'] = data_cp['previous_payouts'].apply(lambda x: len(x))
-    data_cp.drop(columns=['previous_payouts','venue_latitude', 'venue_longitude'], inplace=True)
+    
+    data_cp.drop(columns=to_drop, inplace=True)
     
     data_cp['country'] = data_cp['country'].apply(lambda x: get_country_code(x))
     data_cp['payout_type'] = data_cp['payout_type'].apply(lambda x: 1 if x=='ACH' else 2 if x=='CHECK' else 3)
