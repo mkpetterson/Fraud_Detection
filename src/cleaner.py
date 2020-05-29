@@ -14,7 +14,7 @@ import pycountry
 
 '''GLOBAL'''
 
-keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'event_start', 'fb_published', 'has_logo', 'listed', 'payee_name', 'payout_type', 'previous_payouts', 'user_type', 'venue_country', 'venue_latitude', 'venue_longitude']
+keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'event_created', 'event_published', 'event_end', 'event_start', 'fb_published', 'has_logo', 'listed', 'payee_name', 'payout_type', 'previous_payouts', 'user_created', 'user_type', 'venue_country', 'venue_latitude', 'venue_longitude']
 
 
 '''DF CLEANING'''
@@ -31,25 +31,66 @@ def clean_with_target(data:any) -> pd.DataFrame:
     data_cp['n_previous_payouts'] = data_cp['previous_payouts'].apply(lambda x: len(x))
     data_cp.drop(columns='previous_payouts', inplace=True)
     
+    
+    data_cp['country'] = data_cp['country'].apply(lambda x: get_country_code(x))
+    data_cp['payout_type'] = data_cp['payout_type'].apply(lambda x: 1 if x=='ACH' else 2 if x=='CHECK' else 3)
+    data_cp['listed'] = data_cp['listed'].apply(lambda x: 1 if x=='y' else 0)
+    
+    # Change country, venue country, and currency
+    for col in ['country', 'venue_country', 'currency']:
+        method = get_country_code if re_match_fraud(col, 'country') else get_currency_code
+        data_cp[col] = data_cp[col].apply(method)
+    
+    data_cp = create_features(data_cp)
+    
+    
     return data_cp
+
+
+def create_features(data:pd.DataFrame) -> pd.DataFrame:
+    """ Creates features from given data geared towards KNN Model """
+    res = data.copy()
+
+    res['country'] = res['country'].fillna('None')
+    
+    # Durations (create durations between event_created/start/end/publish)
+    res['event_duration'] = res['event_end'] - res['event_start']
+    res['event_till_publish'] = res['event_published'] - res['event_created']
+    res['user_event_lifespan'] = res['event_created'] - res['user_created']
+    res.drop(columns=['event_created', 'event_published', 'event_start', 'event_end'], inplace=True)
+    
+    return res
+
 
 
 def clean_row(call:any) -> pd.Series:
     """ Returns clean series with wanted columns, intake taken from Client API call """
-    to_keep = ['channels', 'fb_published', 'has_logo', 'user_type', 'n_previous_payouts']
-    #to_keep = ['channels', 'fb_published', 'has_logo', 'listed', 'payout_type',  
-     #       'user_type', 'fraud', 'n_previous_payouts', 'has_email_domain', 'has_payee_name']
+    keep = ['channels', 'country', 'currency', 'delivery_method', 'email_domain', 'event_created', 'event_published', 'event_end', 'event_start', 'fb_published', 'has_logo', 'listed', 'payee_name', 'payout_type', 'previous_payouts', 'user_created', 'user_type', 'venue_country', 'venue_latitude', 'venue_longitude']
     
     
     # Put into dataframe
     data_cp = pd.DataFrame(call)
+    data_cp = data_cp[keep]
     
+        
     data_cp['n_previous_payouts'] = data_cp['previous_payouts'].apply(lambda x: len(x))
-    data_cp.drop(columns='previous_payouts', inplace=True)
-       
-    cleaned_df = data_cp[to_keep]
+    data_cp.drop(columns=['previous_payouts','venue_latitude', 'venue_longitude'], inplace=True)
     
-    return cleaned_df
+    data_cp['country'] = data_cp['country'].apply(lambda x: get_country_code(x))
+    data_cp['payout_type'] = data_cp['payout_type'].apply(lambda x: 1 if x=='ACH' else 2 if x=='CHECK' else 3)
+    data_cp['listed'] = data_cp['listed'].apply(lambda x: 1 if x=='y' else 0)
+    
+    # Change country, venue country, and currency
+    for col in ['country', 'venue_country', 'currency']:
+        method = get_country_code if re_match_fraud(col, 'country') else get_currency_code
+        data_cp[col] = data_cp[col].apply(method)
+    
+    data_cp = create_features(data_cp)    
+    data_cp = ohe_existence(data_cp, ['email_domain', 'payee_name'])
+    
+    return data_cp
+
+
 
 '''ENCODING'''
 
