@@ -91,7 +91,9 @@ def clean_row(call:any, drop_cord:bool=True) -> pd.Series:
 #     data_cp['country'] = data_cp['country'].apply(get_country_code)
 #     data_cp['venue_country'] = data_cp['venue_country'].apply(get_country_code)
 #     data_cp['currency'] = data_cp['currency'].apply(get_currency_code)
-
+    
+    data_cp.fillna(-1, inplace=True)
+    
     return data_cp
 
 
