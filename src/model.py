@@ -33,15 +33,36 @@ def predict_new_data(new_data):
         model = pickle.load(f)
 
     # Predict on new data. Proba function returns prob of class [0,1]
-    new_data = np.array(cleaner.clean_row(new_data))
-    y_hat = model.predict(new_data)
-    y_hat_proba = model.predict_proba(new_data.reshape(1,-1))
+    try:
+        new_data = cleaner.clean_row(new_data)
+        np_data = np.array(new_data)
+    except:
+        new_data = cleaner.clean_row([new_data])
+        np_data = np.array(new_data)
+        
+    # Make predictions    
+    y_hat = model.predict(np_data)
+    y_hat_proba = model.predict_proba(np_data.reshape(1,-1))
     
+    # Get fraud levels
+    proba_fraud, risk_level = compute_risk(y_hat_proba)
     
-    #risk_level = compute_risk(y_hat_proba)
+    # Create new df
+    new_data['proba_fraud'] = proba_fraud 
+    new_data['risk'] = risk_level
     
-    
-    return y_hat[0], y_hat_proba[0][1]
+    return new_data, proba_fraud, risk_level
 
 
-
+def compute_risk(y_hat_proba):
+    
+    proba_fraud = y_hat_proba[0][1]
+    
+    if proba_fraud < 0.1:
+        risk = 'Low Risk'
+    elif proba_fraud > 0.5:
+        risk = 'High Risk'    
+    else:
+        risk = 'Medium Risk'
+    
+    return proba_fraud, risk
