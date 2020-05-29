@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+    <title>Project Title</title>
+    <meta name="description" content="Dota2 Win Predictor">
+    <meta name="author" content="Ricahrd Bellamy">
+    <script src="static/brython.js"></script>
+  <script src="static/brython_stdlib.js"></script>
+  <link rel="stylesheet" type="text/css" 
+          href="static/css/dashboard.css">
+
+</head>
+
+<body onload="brython()">
+    <h1>Project Title</h1>
+    <div id='img-div'>
+        <img id='img1' src='static/current.png'>
+
+        <img id='img2' src='static/current.png'>
+
+        <img id='img3' src='static/current.png'>
+    </div>
+    <button type="button" id='load-button'>anything</button>
+    <div id='model-div'>
+        <p id="test"></p>
+        <div id='div1' class='result-div'>
+            <p id='lat'></p>
+            <p id='long'></p>
+            <p id='country'></p>
+        </div>
+        <div id='div2' class='result-div'>
+            <p id='email'></p>
+            <p id='currency'></p>
+        </div>
+        <div id='div3' class='result-div'>
+            <p id='prediction'></p>
+        </div>
+    </div>
+
+    <script type="text/python">
+
+        from browser import document, ajax, console
+        import json
+
+        def display_solutions(req):
+            print('displaying')
+            print(type(req), req)
+            result = json.loads(req.text)
+            # note the syntax for setting the child text of an element
+            data = result['one']['data']
+            #document['test'].html = f"{data}"
+            document['country'].html = f"Country: {data['country']}"
+            document['lat'].html = f"Latittude: {data['venue_latitude']}"
+            document['long'].html = f"Longitude: {data['venue_longitude']}"
+
+            document['email'].html = f"Email Domain: {data['email_domain']}"
+            document['currency'].html = f"Currency: {data['currency']}"
+
+            document['prediction'].html = f"FRAUD"
+
+
+        def draw_new():
+            print('drawing')
+            req = ajax.Ajax()
+            req.bind('complete', display_solutions)
+            req.open('GET',
+                    '/draw',
+                    True)
+            req.set_header('Content-Type', 'application/json')
+            req.send()
+
+
+        def click(event):
+            print('clicked')
+            draw_new()
+        
+        document['load-button'].bind('click', click)
+
+    </script>
+</body>
+</html>
