@@ -46,7 +46,9 @@ def predict_new_data(new_data):
     proba = y_hat_proba[0][1].tolist()
     #print(f'proba shape: {}', proba.shape)
     
-    new_data = Binary( pickle.dumps( new_data, protocol=2) ) 
+    new_data = Binary( pickle.dumps( new_data, protocol=2) )
+    
+    #new_data = new_data.to_json(orient='records')
     
     #print(f'new_data shape: {}', new_data.shape)
     data_dict = { "data" : new_data, "prediction": pred, "probability" : proba }

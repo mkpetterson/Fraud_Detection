@@ -74,14 +74,9 @@ class EventAPIClient:
             if data:
                 print("Saving...")
                 for row in data:
-<<<<<<< HEAD
                     #cleaned_row = cleaner.clean_row(row)
                     #self.save_to_database(cleaned_row)
                     self.save_to_database(row)
-=======
-                    yield row
-#                     self.save_to_database(row)
->>>>>>> 922fbf69e03c97d1eb9982d480e3f37160c112df
             else:
                 print("No new data received.")
             print(f"Waiting {interval} seconds...")
